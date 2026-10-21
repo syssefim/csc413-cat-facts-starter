@@ -14,7 +14,7 @@ public class MigrateCsvToDb {
     static final String DB_URL = "jdbc:sqlite:catfacts.db";
 
     static final String CREATE_TABLE = """
-        CREATE TABLE facts (
+        CREATE TABLE if NOT EXISTS facts (
             id   INTEGER PRIMARY KEY AUTOINCREMENT,
             fact TEXT    NOT NULL
         )
