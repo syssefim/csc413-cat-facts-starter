@@ -15,6 +15,12 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 /**
  * Cat Facts API, backed by a CSV file.
  *
@@ -85,7 +91,7 @@ public class App {
         }
 
         /** Decides which endpoint a request is for. */
-        void route(HttpExchange exchange) throws IOException {
+        void route(HttpExchange exchange) throws IOException, SQLException {
             String method = exchange.getRequestMethod();
             String path = exchange.getRequestURI().getPath();
 
@@ -122,19 +128,38 @@ public class App {
         }
 
         /** GET /facts */
-        void getAllFacts(HttpExchange exchange) throws IOException {
-            sendJson(exchange, 200, facts);
+        void getAllFacts(HttpExchange exchange) throws IOException, SQLException {
+            List<CatFact> result = new ArrayList<>();
+            String sql = "SELECT id, fact FROM facts ORDER BY id";
+
+            try (Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    result.add(new CatFact(rs.getInt("id"), rs.getString("fact")));
+                }
+            }
+
+            sendJson(exchange, 200, result);
         }
 
         /** GET /facts/{id} */
-        void getFactById(HttpExchange exchange, int id) throws IOException {
-            for (CatFact fact : facts) {
-                if (fact.id() == id) {
-                    sendJson(exchange, 200, fact);
-                    return;
+        void getFactById(HttpExchange exchange, int id) throws IOException, SQLException {
+            String sql = "SELECT id, fact FROM facts WHERE id = ?";
+
+            try (Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, id);
+
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        CatFact fact = new CatFact(rs.getInt("id"), rs.getString("fact"));
+                        sendJson(exchange, 200, fact);
+                    } else {
+                        sendJson(exchange, 404, new ErrorBody("no fact with id " + id));
+                    }
                 }
             }
-            sendJson(exchange, 404, new ErrorBody("no fact with id " + id));
         }
 
         /** POST /facts */
