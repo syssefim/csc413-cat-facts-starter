@@ -68,8 +68,7 @@ public class App {
             .create();
 
     public static void main(String[] args) throws IOException {
-        loadFromCsv();
-        System.out.println("Loaded " + facts.size() + " facts from " + CSV_FILE);
+        
 
         HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
         server.createContext("/facts", new FactsHandler());
