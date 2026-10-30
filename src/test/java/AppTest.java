@@ -83,4 +83,47 @@ class AppTest {
         assertNotNull(fact);
         assertEquals(text, fact.fact());
     }
+
+    //step 9
+    @Test
+    void serializingCatFactProducesJsonWithBothFields() {
+        App.CatFact fact = new App.CatFact(7, "Cats have three eyelids");
+
+        String json = App.gson.toJson(fact);
+
+        assertTrue(json.contains("\"id\": 7"));
+        assertTrue(json.contains("\"fact\": \"Cats have three eyelids\""));
+    }
+
+    //step 10
+    @Test
+    void jsonRequestBodyDeserializesIntoNewFact() {
+        String json = "{\"fact\": \"Cats have three eyelids\"}";
+
+        App.NewFact newFact = App.gson.fromJson(json, App.NewFact.class);
+
+        assertEquals("Cats have three eyelids", newFact.fact());
+    }
+
+    //step 11
+    @Test
+    void apostropheComesOutOfGsonAsAnApostrophe() {
+        App.CatFact fact = new App.CatFact(1, "A cat's whiskers measure gaps");
+
+        String json = App.gson.toJson(fact);
+
+        assertTrue(json.contains("cat's"));
+        assertFalse(json.contains("\\u0027"));
+    }
+
+    //step 12
+    @Test
+    void factWithCommasSurvivesSerializingAndDeserializing() {
+        App.CatFact original = new App.CatFact(9, "Cats, unlike dogs, cannot taste sweetness");
+
+        String json = App.gson.toJson(original);
+        App.CatFact result = App.gson.fromJson(json, App.CatFact.class);
+
+        assertEquals(original, result);
+    }
 }
