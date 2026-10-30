@@ -26,4 +26,15 @@ class AppTest {
 
         assertEquals(first, second);
     }
+
+    //step 4
+    @Test
+    void twoCatFactsWithDifferentTextAreNotEqual() {
+        int id = 7;
+
+        App.CatFact first = new App.CatFact(id, "Cats have three eyelids");
+        App.CatFact second = new App.CatFact(id, "A group of cats is called a clowder");
+
+        assertNotEquals(first, second);
+    }
 }
