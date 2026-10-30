@@ -51,4 +51,14 @@ class AppTest {
 
         assertTrue(found);
     }
+
+    //step 6
+    @Test
+    void newFactGivesBackTheTextItWasBuiltWith() {
+        String text = "Cats have three eyelids";
+
+        App.NewFact newFact = new App.NewFact(text);
+
+        assertEquals(text, newFact.fact());
+    }
 }
