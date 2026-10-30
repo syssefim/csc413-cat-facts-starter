@@ -1,6 +1,9 @@
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class AppTest {
 
     //step 2
@@ -36,5 +39,16 @@ class AppTest {
         App.CatFact second = new App.CatFact(id, "A group of cats is called a clowder");
 
         assertNotEquals(first, second);
+    }
+
+    //step 5
+    @Test
+    void listFindsCatFactByItsValues() {
+        List<App.CatFact> facts = new ArrayList<>();
+        facts.add(new App.CatFact(1, "Cats have three eyelids"));
+
+        boolean found = facts.contains(new App.CatFact(1, "Cats have three eyelids"));
+
+        assertTrue(found);
     }
 }
