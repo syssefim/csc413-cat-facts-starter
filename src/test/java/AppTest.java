@@ -71,4 +71,16 @@ class AppTest {
 
         assertEquals(message, errorBody.error());
     }
+
+    //step 8
+    // Proves the CatFact record does not reject empty text, so that validation has to live outside the record.
+    @Test
+    void catFactCanHoldEmptyText() {
+        String text = "";
+
+        App.CatFact fact = new App.CatFact(1, text);
+
+        assertNotNull(fact);
+        assertEquals(text, fact.fact());
+    }
 }
