@@ -61,4 +61,14 @@ class AppTest {
 
         assertEquals(text, newFact.fact());
     }
+
+    //step 7
+    @Test
+    void errorBodyGivesBackTheMessageItWasBuiltWith() {
+        String message = "no fact with id 99";
+
+        App.ErrorBody errorBody = new App.ErrorBody(message);
+
+        assertEquals(message, errorBody.error());
+    }
 }
