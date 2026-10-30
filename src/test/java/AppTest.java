@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -125,5 +126,66 @@ class AppTest {
         App.CatFact result = App.gson.fromJson(json, App.CatFact.class);
 
         assertEquals(original, result);
+    }
+
+    //step 13
+    @Test
+    void loadFromCsvReadsEveryRowInTheFile() throws IOException {
+        App.facts.clear();
+
+        App.loadFromCsv();
+
+        assertEquals(10, App.facts.size());
+    }
+
+    //step 14
+    @Test
+    void factContainingCommasIsStoredWhole() throws IOException {
+        App.facts.clear();
+
+        App.loadFromCsv();
+        App.CatFact factNine = null;
+        for (App.CatFact fact : App.facts) {
+            if (fact.id() == 9) {
+                factNine = fact;
+            }
+        }
+
+        assertNotNull(factNine);
+        assertEquals("Cats, like people, tend to favor one paw over the other", factNine.fact());
+    }
+
+    //step 15
+    @Test
+    void idsComeFromTheFile() throws IOException {
+        App.facts.clear();
+
+        App.loadFromCsv();
+
+        assertEquals(1, App.facts.get(0).id());
+    }
+
+    //step 16
+    @Test
+    void nextIdEndsUpOnePastTheHighestIdInTheFile() throws IOException {
+        App.facts.clear();
+
+        App.loadFromCsv();
+
+        assertEquals(11, App.nextId);
+    }
+
+    //step 17
+    // Found: this fails with 20 facts instead of 10, because loadFromCsv adds to App.facts without clearing it first.
+    // Would change: call facts.clear() at the start of loadFromCsv, so loading replaces the list instead of adding to it.
+    @Test
+    void callingLoadFromCsvTwiceDoesNotDoubleTheFacts() throws IOException {
+        App.facts.clear();
+
+        App.loadFromCsv();
+        int sizeAfterOneCall = App.facts.size();
+        App.loadFromCsv();
+
+        assertEquals(sizeAfterOneCall, App.facts.size());
     }
 }
